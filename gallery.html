@@ -23,7 +23,7 @@ body {
   overflow: hidden;
 }
 
-/* PHONE FRAME */
+/* FRAME */
 .phone-frame {
   width: 100%;
   max-width: 420px;
@@ -33,43 +33,15 @@ body {
   overflow: hidden;
 }
 
-/* SLIDER */
-.story-container {
-  display: flex;
-  height: 100%;
-  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-/* EACH STORY */
-.story {
-  min-width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  padding: 30px 0;
-}
-
-/* IMAGE */
-.story img {
-  width: 90%;
-  height: 75%;
-  object-fit: cover;
-  border-radius: 28px;
-  box-shadow: 0 25px 45px rgba(0,0,0,0.18);
-}
-
-/* PROGRESS INSIDE PHOTO */
+/* PROGRESS BAR (FIXED POSITION) */
 .progress {
   position: absolute;
-  top: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 85%;
+  top: 14px;
+  left: 12px;
+  right: 12px;
   display: flex;
   gap: 6px;
-  z-index: 5;
+  z-index: 10;
 }
 
 .bar {
@@ -85,15 +57,47 @@ body {
   display: block;
   height: 100%;
   width: 100%;
-  background: white;
+  background: #7399d2;
   animation: fill 3.5s linear;
+}
+
+/* SLIDER */
+.story-container {
+  display: flex;
+  height: 100%;
+  transition: transform 0.9s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.story {
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo-box {
+  width: 90%;
+  height: 90%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 25px 45px rgba(0,0,0,0.18);
+  background: #000;
+}
+
+.photo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ENDING */
 .ending {
   text-align: center;
-  padding: 40px 24px;
+  padding: 150px 100px;
   color: #3b5f94;
+  background: #eef6ff;
+  border-radius: 26px;
 }
 
 .ending h2 {
@@ -106,7 +110,6 @@ body {
   opacity: 0.85;
 }
 
-/* ANIM */
 @keyframes fill {
   from { width: 0; }
   to { width: 100%; }
@@ -116,55 +119,27 @@ body {
 
 <body>
 
-<audio id="bgm" src="assets/music.mp3" loop></audio>
+<audio id="bgm" src="assets/music.mp3" autoplay loop></audio>
 
 <div class="phone-frame">
+
+  <!-- PROGRESS -->
+  <div class="progress" id="progress"></div>
+
+  <!-- SLIDER -->
   <div class="story-container" id="slider">
 
-    <!-- SLIDE 1 -->
-    <div class="story">
-      <div class="progress" id="progress"></div>
-      <img src="img/photo1.jpg">
-    </div>
+    <div class="story"><div class="photo-box"><img src="img/photo1.jpg"></div></div>
+    <div class="story"><div class="photo-box"><img src="img/photo2.jpg"></div></div>
+    <div class="story"><div class="photo-box"><img src="img/photo3.jpg"></div></div>
+    <div class="story"><div class="photo-box"><img src="img/photo4.jpg"></div></div>
+    <div class="story"><div class="photo-box"><img src="img/photo5.jpg"></div></div>
+    <div class="story"><div class="photo-box"><img src="img/photo6.jpg"></div></div>
+    <div class="story"><div class="photo-box"><img src="img/photo7.jpg"></div></div>
+    <div class="story"><div class="photo-box"><img src="img/photo8.jpg"></div></div>
 
     <div class="story">
-      <div class="progress"></div>
-      <img src="img/photo2.jpg">
-    </div>
-
-    <div class="story">
-      <div class="progress"></div>
-      <img src="img/photo3.jpg">
-    </div>
-
-    <div class="story">
-      <div class="progress"></div>
-      <img src="img/photo4.jpg">
-    </div>
-
-    <div class="story">
-      <div class="progress"></div>
-      <img src="img/photo5.jpg">
-    </div>
-
-    <div class="story">
-      <div class="progress"></div>
-      <img src="img/photo6.jpg">
-    </div>
-
-    <div class="story">
-      <div class="progress"></div>
-      <img src="img/photo7.jpg">
-    </div>
-
-    <div class="story">
-      <div class="progress"></div>
-      <img src="img/photo8.jpg">
-    </div>
-
-    <div class="story">
-      <div class="progress"></div>
-      <div class="ending">
+      <div class="photo-box ending">
         <h2>Thank you for the memories 🤍</h2>
         <p>Some moments stay quietly, but forever.</p>
       </div>
@@ -176,6 +151,7 @@ body {
 <script>
 const slider = document.getElementById('slider');
 const stories = document.querySelectorAll('.story');
+const progress = document.getElementById('progress');
 const audio = document.getElementById('bgm');
 
 let index = 0;
@@ -184,22 +160,18 @@ let isHolding = false;
 let audioStarted = false;
 let isEnding = false;
 
-// build progress bars
-document.querySelectorAll('.progress').forEach(p => {
-  for (let i = 0; i < stories.length; i++) {
-    const bar = document.createElement('div');
-    bar.className = 'bar';
-    p.appendChild(bar);
-  }
-});
+// create progress bars
+for (let i = 0; i < stories.length; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'bar';
+  progress.appendChild(bar);
+}
 
 function updateSlide() {
   slider.style.transform = `translateX(-${index * 100}%)`;
 
-  document.querySelectorAll('.progress').forEach(p => {
-    [...p.children].forEach((bar, i) => {
-      bar.classList.toggle('active', i === index);
-    });
+  document.querySelectorAll('.bar').forEach((bar, i) => {
+    bar.classList.toggle('active', i === index);
   });
 
   if (index === stories.length - 1 && !isEnding) {
@@ -215,13 +187,13 @@ function updateSlide() {
 
 function fadeOutMusic() {
   let v = audio.volume;
-  const f = setInterval(() => {
+  const fade = setInterval(() => {
     if (v > 0.05) {
       v -= 0.05;
       audio.volume = v;
     } else {
       audio.pause();
-      clearInterval(f);
+      clearInterval(fade);
     }
   }, 120);
 }
@@ -230,15 +202,15 @@ function fadeInMusic() {
   audio.volume = 0;
   audio.play().catch(() => {});
   let v = 0;
-  const f = setInterval(() => {
+  const fade = setInterval(() => {
     if (v < 1) {
       v += 0.05;
       audio.volume = v;
-    } else clearInterval(f);
+    } else clearInterval(fade);
   }, 120);
 }
 
-// Auto slide
+// autoplay
 setInterval(() => {
   if (!isHolding && index < stories.length - 1) {
     index++;
@@ -246,7 +218,7 @@ setInterval(() => {
   }
 }, 3500);
 
-// Touch
+// swipe
 document.addEventListener('touchstart', e => {
   startX = e.touches[0].clientX;
   isHolding = true;
