@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memories 💙</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(180deg, #cfe9ff, #eef6ff);
+    }
+
+    .story-container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    .story {
+      min-width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .story img {
+      width: 85%;
+      height: 97vh;
+      max-width: 420px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .ending {
+      text-align: center;
+      color: #3b5f94;
+      padding: 40px;
+      animation: fadeIn 1s ease;
+    }
+
+    .progress {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 10;
+    }
+
+    .bar {
+      width: 40px;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.4);
+      overflow: hidden;
+    }
+
+    .bar.active::after {
+      content: '';
+      display: block;
+      height: 100%;
+      width: 100%;
+      background: white;
+      animation: fill 3.5s linear;
+    }
+
+    @keyframes fill {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+
+<body>
+
+<audio id="bgm" src="assets/music.mp3" autoplay loop></audio>
+
+<div class="progress" id="progress"></div>
+
+<div class="story-container" id="slider">
+  <div class="story"><img src="img/photo1.jpg"></div>
+  <div class="story"><img src="img/photo2.jpg"></div>
+  <div class="story"><img src="img/photo3.jpg"></div>
+  <div class="story"><img src="img/photo4.jpg"></div>
+  <div class="story"><img src="img/photo5.jpg"></div>
+  <div class="story"><img src="img/photo6.jpg"></div>
+  <div class="story"><img src="img/photo7.jpg"></div>
+  <div class="story"><img src="img/photo8.jpg"></div>
+
+  <div class="story">
+    <div class="ending">
+      <h2>Thank you for the memories 🤍</h2>
+      <p>Some moments stay quietly, but forever.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const slider = document.getElementById('slider');
+const bars = document.getElementById('progress');
+const audio = document.getElementById('bgm');
+const total = document.querySelectorAll('.story').length;
+
+let index = 0;
+let startX = 0;
+let isHolding = false;
+let audioStarted = false;
+let isEnding = false;
+
+// progress bars
+for (let i = 0; i < total; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'bar' + (i === 0 ? ' active' : '');
+  bars.appendChild(bar);
+}
+
+function updateSlide() {
+  slider.style.transform = `translateX(-${index * 100}vw)`;
+
+  document.querySelectorAll('.bar').forEach((b, i) => {
+    b.classList.toggle('active', i === index);
+  });
+
+  if (index === total - 1 && !isEnding) {
+    isEnding = true;
+    fadeOutMusic();
+  }
+
+  if (index < total - 1 && isEnding) {
+    isEnding = false;
+    fadeInMusic();
+  }
+}
+
+function fadeOutMusic() {
+  let vol = audio.volume;
+  const fade = setInterval(() => {
+    if (vol > 0.05) {
+      vol -= 0.05;
+      audio.volume = vol;
+    } else {
+      audio.pause();
+      clearInterval(fade);
+    }
+  }, 200);
+}
+
+function fadeInMusic() {
+  audio.volume = 0;
+  audio.play().catch(() => {});
+  let vol = 0;
+  const fade = setInterval(() => {
+    if (vol < 1) {
+      vol += 0.05;
+      audio.volume = vol;
+    } else {
+      clearInterval(fade);
+    }
+  }, 200);
+}
+
+function nextSlide() {
+  if (index < total - 1) {
+    index++;
+    updateSlide();
+  }
+}
+
+// Auto slide
+setInterval(() => {
+  if (!isHolding && index < total - 1) nextSlide();
+}, 3500);
+
+// Touch controls
+document.addEventListener('touchstart', e => {
+  startX = e.touches[0].clientX;
+  isHolding = true;
+
+  if (!audioStarted) {
+    audio.play().catch(() => {});
+    audioStarted = true;
+  }
+});
+
+document.addEventListener('touchend', e => {
+  isHolding = false;
+  const diff = startX - e.changedTouches[0].clientX;
+
+  if (diff > 50) index++;
+  if (diff < -50 && index > 0) index--;
+
+  updateSlide();
+});
+</script>
+
+</body>
+</html>
