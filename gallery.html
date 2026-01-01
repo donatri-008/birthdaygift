@@ -8,66 +8,90 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
   <style>
-    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+  
     body {
       margin: 0;
       height: 100vh;
-      overflow: hidden;
       background: linear-gradient(180deg, #cfe9ff, #eef6ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
     }
-
+  
+    /* FRAME HP */
+    .phone-frame {
+      width: 100%;
+      max-width: 420px;
+      height: 100vh;
+      max-height: 820px;
+      background: transparent;
+      position: relative;
+      overflow: hidden;
+    }
+  
     .story-container {
       display: flex;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
     }
-
+  
     .story {
-      min-width: 100vw;
-      height: 100vh;
+      min-width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      animation: fadeIn 0.6s ease;
+      padding: 30px 0;
     }
-
+  
     .story img {
-      width: 85%;
-      height: 97vh;
-      max-width: 420px;
+      width: 90%;
+      height: 75%;
       object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      border-radius: 28px;
+      box-shadow: 0 25px 45px rgba(0,0,0,0.18);
     }
-
+  
     .ending {
       text-align: center;
+      padding: 40px 24px;
       color: #3b5f94;
-      padding: 40px;
-      animation: fadeIn 1s ease;
     }
-
+  
+    .ending h2 {
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+  
+    .ending p {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+  
     .progress {
       position: absolute;
-      top: 20px;
+      top: 18px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       gap: 6px;
       z-index: 10;
     }
-
+  
     .bar {
-      width: 40px;
+      width: 36px;
       height: 4px;
       border-radius: 4px;
       background: rgba(255,255,255,0.4);
       overflow: hidden;
     }
-
+  
     .bar.active::after {
       content: '';
       display: block;
@@ -76,43 +100,48 @@
       background: white;
       animation: fill 3.5s linear;
     }
-
+  
     @keyframes fill {
       from { width: 0; }
       to { width: 100%; }
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
+  
+    .hint {
+      position: absolute;
+      bottom: 24px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #5c7fb0;
+      opacity: 0.8;
     }
-  </style>
+  </style>  
 </head>
 
 <body>
 
 <audio id="bgm" src="assets/music.mp3" autoplay loop></audio>
+<div class="phone-frame">
+    <div class="progress" id="progress"></div>
 
-<div class="progress" id="progress"></div>
+    <div class="story-container" id="slider">
+        <div class="story"><img src="img/photo1.jpg"></div>
+        <div class="story"><img src="img/photo2.jpg"></div>
+        <div class="story"><img src="img/photo3.jpg"></div>
+        <div class="story"><img src="img/photo4.jpg"></div>
+        <div class="story"><img src="img/photo5.jpg"></div>
+        <div class="story"><img src="img/photo6.jpg"></div>
+        <div class="story"><img src="img/photo7.jpg"></div>
+        <div class="story"><img src="img/photo8.jpg"></div>
 
-<div class="story-container" id="slider">
-  <div class="story"><img src="img/photo1.jpg"></div>
-  <div class="story"><img src="img/photo2.jpg"></div>
-  <div class="story"><img src="img/photo3.jpg"></div>
-  <div class="story"><img src="img/photo4.jpg"></div>
-  <div class="story"><img src="img/photo5.jpg"></div>
-  <div class="story"><img src="img/photo6.jpg"></div>
-  <div class="story"><img src="img/photo7.jpg"></div>
-  <div class="story"><img src="img/photo8.jpg"></div>
-
-  <div class="story">
-    <div class="ending">
-      <h2>Thank you for the memories 🤍</h2>
-      <p>Some moments stay quietly, but forever.</p>
+        <div class="story">
+            <div class="ending">
+            <h2>Thank you for the memories 🤍</h2>
+            <p>Some moments stay quietly, but forever.</p>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-
 <script>
 const slider = document.getElementById('slider');
 const bars = document.getElementById('progress');
