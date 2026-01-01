@@ -33,7 +33,7 @@ body {
   overflow: hidden;
 }
 
-/* PROGRESS BAR (FIXED POSITION) */
+/* PROGRESS BAR (FIXED & INDEPENDENT) */
 .progress {
   position: absolute;
   top: 14px;
@@ -41,7 +41,8 @@ body {
   right: 12px;
   display: flex;
   gap: 6px;
-  z-index: 10;
+  z-index: 50;
+  pointer-events: none;
 }
 
 .bar {
@@ -65,7 +66,8 @@ body {
 .story-container {
   display: flex;
   height: 100%;
-  transition: transform 0.9s cubic-bezier(0.77, 0, 0.175, 1);
+  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+  will-change: transform;
 }
 
 .story {
@@ -77,10 +79,10 @@ body {
 }
 
 .photo-box {
-  width: 93%;
-  height: 80%;
+  width: 92%;
+  height: 78%;
   margin-bottom: 90px;
-  border-radius: 20px;
+  border-radius: 22px;
   overflow: hidden;
   box-shadow: 0 25px 45px rgba(0,0,0,0.18);
   background: #000;
@@ -94,20 +96,25 @@ body {
 
 /* ENDING */
 .ending {
-  text-align: center;
-  padding: 150px 95px;
-  color: #3b5f94;
   background: #eef6ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 10vh 8vw;
 }
 
 .ending h2 {
   font-weight: 500;
   margin-bottom: 12px;
+  color: #3b5f94;
 }
 
 .ending p {
   font-size: 0.95rem;
   opacity: 0.85;
+  color: #3b5f94;
 }
 
 @keyframes fill {
@@ -119,16 +126,13 @@ body {
 
 <body>
 
-<audio id="bgm" src="assets/music.mp3" autoplay loop></audio>
+<audio id="bgm" src="assets/music.mp3" loop></audio>
 
 <div class="phone-frame">
 
-  <!-- PROGRESS -->
   <div class="progress" id="progress"></div>
 
-  <!-- SLIDER -->
   <div class="story-container" id="slider">
-
     <div class="story"><div class="photo-box"><img src="img/photo1.jpg"></div></div>
     <div class="story"><div class="photo-box"><img src="img/photo2.jpg"></div></div>
     <div class="story"><div class="photo-box"><img src="img/photo3.jpg"></div></div>
@@ -144,7 +148,6 @@ body {
         <p>Some moments stay quietly, but forever.</p>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -158,14 +161,13 @@ let index = 0;
 let startX = 0;
 let isHolding = false;
 let audioStarted = false;
-let isEnding = false;
 
 // create progress bars
-for (let i = 0; i < stories.length; i++) {
+stories.forEach(() => {
   const bar = document.createElement('div');
   bar.className = 'bar';
   progress.appendChild(bar);
-}
+});
 
 function updateSlide() {
   slider.style.transform = `translateX(-${index * 100}%)`;
@@ -174,40 +176,37 @@ function updateSlide() {
     bar.classList.toggle('active', i === index);
   });
 
-  if (index === stories.length - 1 && !isEnding) {
-    isEnding = true;
-    fadeOutMusic();
-  }
-
-  if (index < stories.length - 1 && isEnding) {
-    isEnding = false;
-    fadeInMusic();
+  // music control
+  if (index === stories.length - 1) {
+    fadeOut();
+  } else {
+    fadeIn();
   }
 }
 
-function fadeOutMusic() {
+function fadeOut() {
   let v = audio.volume;
-  const fade = setInterval(() => {
+  const t = setInterval(() => {
     if (v > 0.05) {
       v -= 0.05;
       audio.volume = v;
     } else {
       audio.pause();
-      clearInterval(fade);
+      clearInterval(t);
     }
-  }, 120);
+  }, 100);
 }
 
-function fadeInMusic() {
-  audio.volume = 0;
+function fadeIn() {
+  if (!audioStarted) return;
   audio.play().catch(() => {});
-  let v = 0;
-  const fade = setInterval(() => {
+  let v = audio.volume;
+  const t = setInterval(() => {
     if (v < 1) {
       v += 0.05;
       audio.volume = v;
-    } else clearInterval(fade);
-  }, 120);
+    } else clearInterval(t);
+  }, 100);
 }
 
 // autoplay
@@ -242,16 +241,3 @@ document.addEventListener('touchend', e => {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
