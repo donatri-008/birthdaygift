@@ -1,152 +1,182 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Memories 💙</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Memories 💙</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
-  
-    body {
-      margin: 0;
-      height: 100vh;
-      background: linear-gradient(180deg, #cfe9ff, #eef6ff);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-  
-    /* FRAME HP */
-    .phone-frame {
-      width: 100%;
-      max-width: 420px;
-      height: 100vh;
-      max-height: 820px;
-      background: transparent;
-      position: relative;
-      overflow: hidden;
-    }
-  
-    .story-container {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
-    }
-  
-    .story {
-      min-width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px 0;
-    }
-  
-    .story img {
-      width: 90%;
-      height: 75%;
-      object-fit: cover;
-      border-radius: 28px;
-      box-shadow: 0 25px 45px rgba(0,0,0,0.18);
-    }
-  
-    .ending {
-      text-align: center;
-      padding: 40px 24px;
-      color: #3b5f94;
-    }
-  
-    .ending h2 {
-      font-weight: 500;
-      margin-bottom: 12px;
-    }
-  
-    .ending p {
-      font-size: 0.95rem;
-      opacity: 0.85;
-    }
-  
-    .progress {
-      position: absolute;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 6px;
-      z-index: 10;
-    }
-  
-    .bar {
-      width: 36px;
-      height: 4px;
-      border-radius: 4px;
-      background: rgba(255,255,255,0.4);
-      overflow: hidden;
-    }
-  
-    .bar.active::after {
-      content: '';
-      display: block;
-      height: 100%;
-      width: 100%;
-      background: white;
-      animation: fill 3.5s linear;
-    }
-  
-    @keyframes fill {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-  
-    .hint {
-      position: absolute;
-      bottom: 24px;
-      width: 100%;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #5c7fb0;
-      opacity: 0.8;
-    }
-  </style>  
+<style>
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(180deg, #cfe9ff, #eef6ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* PHONE FRAME */
+.phone-frame {
+  width: 100%;
+  max-width: 420px;
+  height: 100vh;
+  max-height: 820px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* SLIDER */
+.story-container {
+  display: flex;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* EACH STORY */
+.story {
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 30px 0;
+}
+
+/* IMAGE */
+.story img {
+  width: 90%;
+  height: 75%;
+  object-fit: cover;
+  border-radius: 28px;
+  box-shadow: 0 25px 45px rgba(0,0,0,0.18);
+}
+
+/* PROGRESS INSIDE PHOTO */
+.progress {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.35);
+  overflow: hidden;
+}
+
+.bar.active::after {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: white;
+  animation: fill 3.5s linear;
+}
+
+/* ENDING */
+.ending {
+  text-align: center;
+  padding: 40px 24px;
+  color: #3b5f94;
+}
+
+.ending h2 {
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.ending p {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+/* ANIM */
+@keyframes fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+</style>
 </head>
 
 <body>
 
-<audio id="bgm" src="assets/music.mp3" autoplay loop></audio>
+<audio id="bgm" src="assets/music.mp3" loop></audio>
+
 <div class="phone-frame">
-    <div class="progress" id="progress"></div>
+  <div class="story-container" id="slider">
 
-    <div class="story-container" id="slider">
-        <div class="story"><img src="img/photo1.jpg"></div>
-        <div class="story"><img src="img/photo2.jpg"></div>
-        <div class="story"><img src="img/photo3.jpg"></div>
-        <div class="story"><img src="img/photo4.jpg"></div>
-        <div class="story"><img src="img/photo5.jpg"></div>
-        <div class="story"><img src="img/photo6.jpg"></div>
-        <div class="story"><img src="img/photo7.jpg"></div>
-        <div class="story"><img src="img/photo8.jpg"></div>
-
-        <div class="story">
-            <div class="ending">
-            <h2>Thank you for the memories 🤍</h2>
-            <p>Some moments stay quietly, but forever.</p>
-            </div>
-        </div>
+    <!-- SLIDE 1 -->
+    <div class="story">
+      <div class="progress" id="progress"></div>
+      <img src="img/photo1.jpg">
     </div>
+
+    <div class="story">
+      <div class="progress"></div>
+      <img src="img/photo2.jpg">
+    </div>
+
+    <div class="story">
+      <div class="progress"></div>
+      <img src="img/photo3.jpg">
+    </div>
+
+    <div class="story">
+      <div class="progress"></div>
+      <img src="img/photo4.jpg">
+    </div>
+
+    <div class="story">
+      <div class="progress"></div>
+      <img src="img/photo5.jpg">
+    </div>
+
+    <div class="story">
+      <div class="progress"></div>
+      <img src="img/photo6.jpg">
+    </div>
+
+    <div class="story">
+      <div class="progress"></div>
+      <img src="img/photo7.jpg">
+    </div>
+
+    <div class="story">
+      <div class="progress"></div>
+      <img src="img/photo8.jpg">
+    </div>
+
+    <div class="story">
+      <div class="progress"></div>
+      <div class="ending">
+        <h2>Thank you for the memories 🤍</h2>
+        <p>Some moments stay quietly, but forever.</p>
+      </div>
+    </div>
+
+  </div>
 </div>
+
 <script>
 const slider = document.getElementById('slider');
-const bars = document.getElementById('progress');
+const stories = document.querySelectorAll('.story');
 const audio = document.getElementById('bgm');
-const total = document.querySelectorAll('.story').length;
 
 let index = 0;
 let startX = 0;
@@ -154,71 +184,69 @@ let isHolding = false;
 let audioStarted = false;
 let isEnding = false;
 
-// progress bars
-for (let i = 0; i < total; i++) {
-  const bar = document.createElement('div');
-  bar.className = 'bar' + (i === 0 ? ' active' : '');
-  bars.appendChild(bar);
-}
+// build progress bars
+document.querySelectorAll('.progress').forEach(p => {
+  for (let i = 0; i < stories.length; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    p.appendChild(bar);
+  }
+});
 
 function updateSlide() {
-  slider.style.transform = `translateX(-${index * 100}vw)`;
+  slider.style.transform = `translateX(-${index * 100}%)`;
 
-  document.querySelectorAll('.bar').forEach((b, i) => {
-    b.classList.toggle('active', i === index);
+  document.querySelectorAll('.progress').forEach(p => {
+    [...p.children].forEach((bar, i) => {
+      bar.classList.toggle('active', i === index);
+    });
   });
 
-  if (index === total - 1 && !isEnding) {
+  if (index === stories.length - 1 && !isEnding) {
     isEnding = true;
     fadeOutMusic();
   }
 
-  if (index < total - 1 && isEnding) {
+  if (index < stories.length - 1 && isEnding) {
     isEnding = false;
     fadeInMusic();
   }
 }
 
 function fadeOutMusic() {
-  let vol = audio.volume;
-  const fade = setInterval(() => {
-    if (vol > 0.05) {
-      vol -= 0.05;
-      audio.volume = vol;
+  let v = audio.volume;
+  const f = setInterval(() => {
+    if (v > 0.05) {
+      v -= 0.05;
+      audio.volume = v;
     } else {
       audio.pause();
-      clearInterval(fade);
+      clearInterval(f);
     }
-  }, 200);
+  }, 120);
 }
 
 function fadeInMusic() {
   audio.volume = 0;
   audio.play().catch(() => {});
-  let vol = 0;
-  const fade = setInterval(() => {
-    if (vol < 1) {
-      vol += 0.05;
-      audio.volume = vol;
-    } else {
-      clearInterval(fade);
-    }
-  }, 200);
-}
-
-function nextSlide() {
-  if (index < total - 1) {
-    index++;
-    updateSlide();
-  }
+  let v = 0;
+  const f = setInterval(() => {
+    if (v < 1) {
+      v += 0.05;
+      audio.volume = v;
+    } else clearInterval(f);
+  }, 120);
 }
 
 // Auto slide
 setInterval(() => {
-  if (!isHolding && index < total - 1) nextSlide();
+  if (!isHolding && index < stories.length - 1) {
+    index++;
+    updateSlide();
+  }
 }, 3500);
 
-// Touch controls
+// Touch
 document.addEventListener('touchstart', e => {
   startX = e.touches[0].clientX;
   isHolding = true;
@@ -233,7 +261,7 @@ document.addEventListener('touchend', e => {
   isHolding = false;
   const diff = startX - e.changedTouches[0].clientX;
 
-  if (diff > 50) index++;
+  if (diff > 50 && index < stories.length - 1) index++;
   if (diff < -50 && index > 0) index--;
 
   updateSlide();
