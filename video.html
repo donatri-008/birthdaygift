@@ -41,7 +41,7 @@ body {
 }
 
 .video-box {
-  width: 100%;
+  width: 90%;
   margin-top: 15px;
   aspect-ratio: 16 / 9;
   background: #000;
@@ -219,7 +219,17 @@ let isDragging = false;
 
 function loadVideo(num) {
   currentVideo = num;
-  video.src = `video/video${num}.mp4`;
+
+  const videoIds = {
+    1: "1UzrtxY0MnIz7PZyIB9TgwsOLaVKFSGgZ",  // Video 1 (sudah publik)
+    2: "1V18aS8D5NfWjEm5E4LWGjZgJI53aeSpc",  // Video 2
+    3: "1V48rms5Qq6knGhxO7dD6xupAyWub7MYy"   // Video 3
+  };
+
+  const videoId = videoIds[num];
+  video.src = `https://drive.google.com/file/d/${videoId}/preview`;
+
+  video.load();  // Penting untuk reload source baru
   video.currentTime = 0;
   video.pause();
   playBtn.classList.remove("hide");
@@ -227,7 +237,7 @@ function loadVideo(num) {
   versionList.style.display = "none";
 }
 
-loadVideo(1);
+loadVideo(1);  // Mulai dari video 1
 
 /* PLAY / PAUSE */
 document.getElementById("videoBox").addEventListener("click", (e) => {
