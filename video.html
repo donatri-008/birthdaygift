@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Memories - Video 💙</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(180deg, #cfe9ff, #eef6ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  height: 100vh;
+  max-height: 820px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #3b5f94;
+  margin-bottom: 12px;
+}
+
+.video-box {
+  width: 100%;
+  margin-top: 15px;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 22px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 25px 45px rgba(0,0,0,.25);
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.play-btn {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 64px;
+  color: white;
+  background: rgba(0,0,0,.25);
+  cursor: pointer;
+  transition: .3s;
+  z-index: 2;
+}
+
+.play-btn.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.controls {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity .4s ease;
+  z-index: 3;
+}
+
+.controls.show {
+  opacity: 1;
+}
+
+.progress {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,.25);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.progress span {
+  height: 100%;
+  width: 0%;
+  display: block;
+  background: white;
+}
+
+.ctrl-btn {
+  border: none;
+  background: rgba(255,255,255,.25);
+  color: white;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.end-screen {
+  margin-top: 25px;
+  text-align: center;
+  display: none;
+  animation: fadeIn .4s ease;
+}
+
+.end-screen h2 {
+  color: #3b5f94;
+  margin-bottom: 6px;
+}
+
+.end-screen p {
+  font-size: .9rem;
+  opacity: .8;
+}
+
+.end-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.end-actions button {
+  padding: 10px 16px;
+  border-radius: 20px;
+  border: none;
+  background: #7aaeff;
+  color: white;
+  cursor: pointer;
+}
+
+.version-list {
+  display: none;
+  margin-top: 12px;
+  gap: 10px;
+  justify-content: center;
+}
+
+.version-list button {
+  background: #5f8fe0;
+  padding: 8px 14px;
+  border-radius: 18px;
+  border: none;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="title">A little gift for you 💙</div>
+
+  <div class="video-box" id="videoBox">
+    <video id="video" playsinline></video>
+
+    <div class="play-btn" id="playBtn">▶</div>
+
+    <div class="controls" id="controls">
+      <div class="progress" id="progressBar">
+        <span id="progress"></span>
+      </div>
+      <button class="ctrl-btn" onclick="toggleFullscreen()">⛶</button>
+    </div>
+  </div>
+
+  <div class="end-screen" id="endScreen">
+    <h2>Hope it made you smile ✨</h2>
+    <p>What would you like to do next?</p>
+
+    <div class="end-actions">
+      <button onclick="showVersions()">See another version</button>
+      <button onclick="replay()">Replay</button>
+      <button onclick="goHome()">Finish</button>
+    </div>
+
+    <div class="version-list" id="versionList"></div>
+  </div>
+</div>
+
+<script>
+const video = document.getElementById("video");
+const playBtn = document.getElementById("playBtn");
+const progress = document.getElementById("progress");
+const progressBar = document.getElementById("progressBar");
+const controls = document.getElementById("controls");
+const endScreen = document.getElementById("endScreen");
+const versionList = document.getElementById("versionList");
+
+let currentVideo = 1;
+let hideTimeout;
+let isDragging = false;
+
+function loadVideo(num) {
+  currentVideo = num;
+  video.src = `video/video${num}.mp4`;
+  video.currentTime = 0;
+  video.pause();
+  playBtn.classList.remove("hide");
+  endScreen.style.display = "none";
+  versionList.style.display = "none";
+}
+
+loadVideo(1);
+
+/* PLAY / PAUSE */
+document.getElementById("videoBox").addEventListener("click", (e) => {
+  if (e.target.closest(".controls")) return;
+
+  if (video.paused) {
+    video.play();
+    playBtn.classList.add("hide");
+  } else {
+    video.pause();
+    playBtn.classList.remove("hide");
+  }
+});
+
+/* PROGRESS UPDATE */
+video.addEventListener("timeupdate", () => {
+  progress.style.width = (video.currentTime / video.duration) * 100 + "%";
+});
+
+/* SEEK */
+progressBar.addEventListener("mousedown", () => isDragging = true);
+progressBar.addEventListener("click", seek);
+
+document.addEventListener("mousemove", e => {
+  if (!isDragging) return;
+  seek(e);
+});
+
+document.addEventListener("mouseup", () => isDragging = false);
+
+function seek(e) {
+  const rect = progressBar.getBoundingClientRect();
+  const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+  video.currentTime = (x / rect.width) * video.duration;
+}
+
+/* AUTO HIDE CONTROLS */
+function showControls() {
+  controls.classList.add("show");
+  clearTimeout(hideTimeout);
+  hideTimeout = setTimeout(() => {
+    if (!video.paused) controls.classList.remove("show");
+  }, 1500);
+}
+
+document.getElementById("videoBox").addEventListener("mousemove", showControls);
+document.getElementById("videoBox").addEventListener("touchstart", showControls);
+
+/* END */
+video.addEventListener("ended", () => {
+  playBtn.classList.remove("hide");
+  endScreen.style.display = "block";
+});
+
+/* REPLAY */
+function replay() {
+  video.currentTime = 0;
+  video.play();
+  playBtn.classList.add("hide");
+  endScreen.style.display = "none";
+}
+
+/* VERSION HANDLER */
+function showVersions() {
+  versionList.innerHTML = "";
+  versionList.style.display = "flex";
+
+  [1, 2, 3].forEach(v => {
+    if (v !== currentVideo) {
+      const btn = document.createElement("button");
+      btn.textContent = `Version ${v}`;
+      btn.onclick = () => loadVideo(v);
+      versionList.appendChild(btn);
+    }
+  });
+}
+
+/* FULLSCREEN */
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    video.requestFullscreen().catch(() => {
+      if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+/* FINISH */
+function goHome() {
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
